@@ -18,6 +18,7 @@ eval "$(rbenv init -)"
 source /home/daniel/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 
 
