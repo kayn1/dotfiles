@@ -13,48 +13,31 @@ set cursorline
 set guicursor=i:ver25-iCursor
 set termguicolors
 set encoding=UTF-8
-set omnifunc=syntaxcomplete#CompleteCSS
 
 set swapfile
 set dir=~/.swap-files
+set nospell
+set hlsearch
 
 call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdcommenter'
-Plug 'morhetz/gruvbox'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf'
 Plug 'preservim/nerdtree'
 Plug 'dense-analysis/ale'
-Plug 'lifepillar/vim-solarized8'
 Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'tpope/vim-sensible'
-Plug '~/.fzf'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'ryanoasis/vim-devicons'
-Plug 'vwxyutarooo/nerdtree-devicons-syntax'
-Plug 'phanviet/vim-monokai-pro'
-Plug 'isruslan/vim-es6'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 call plug#end()
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-Plugin 'othree/yajs.vim'
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'othree/csscomplete.vim'
 Plugin 'tpope/vim-rails'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -81,29 +64,6 @@ endfunction
 
 map <leader>r :NERDTreeFind<cr>
 
-
-let s:colors = {
-  \ 'brown'       : "905532",
-  \ 'aqua'        : "3AFFDB",
-  \ 'blue'        : "689FB6",
-  \ 'darkBlue'    : "44788E",
-  \ 'purple'      : "834F79",
-  \ 'lightPurple' : "834F79",
-  \ 'red'         : "AE403F",
-  \ 'beige'       : "F5C06F",
-  \ 'yellow'      : "F09F17",
-  \ 'orange'      : "D4843E",
-  \ 'darkOrange'  : "F16529",
-  \ 'pink'        : "CB6F6F",
-  \ 'salmon'      : "EE6E73",
-  \ 'green'       : "8FAA54",
-  \ 'lightGreen'  : "31B53E",
-  \ 'white'       : "FFFFFF"
-\ }
-
-let g:NERDTreeFileExtensionHighlightFullName = 1
-let g:NERDTreeExactMatchHighlightFullName = 1
-let g:NERDTreePatternMatchHighlightFullName = 1
 let NERDTreeShowHidden=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -112,18 +72,10 @@ nnoremap <C-K> <C-W>k
 nnoremap <C-L> <C-W>l
 nnoremap <C-H> <C-W>h
 
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-set regexpengine=2
-
+set regexpengine=1
 
 set noballooneval
 let g:netrw_nobeval = 1
-
-let g:JSHintHighlightErrorLine = 0
 
 set list          " Display unprintable characters f12 - switches
 set listchars=tab:•\ ,trail:•,extends:»,precedes:« " Unprintable chars mapping
@@ -134,11 +86,6 @@ nnoremap <C-S> :update<cr>
 
 
 set tags=tags
-
-let g:ycm_semantic_triggers = {
-    \   'css': [ 're!^', 're!^\s+', ': ' ],
-    \   'scss': [ 're!^', 're!^\s+', ': ' ],
-    \ }
 
 if (has("termguicolors"))
   set termguicolors
@@ -180,21 +127,11 @@ let g:ale_fixers = {
 \   'ruby': ['rubocop']
 \}
 
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
 set hidden
-
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
-    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-    \ 'python': ['/usr/local/bin/pyls'],
-    \ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
-    \ }
-
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-" Or map each action separately
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 let g:better_whitespace_enabled=1
 let g:strip_whitespace_on_save=1
@@ -219,4 +156,28 @@ set number relativenumber
 
 let g:NERDSpaceDelims = 1
 
+" NERDTress File highlighting
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+endfunction
+
+call NERDTreeHighlightFile('jade', 'green', 'none', 'green', '#151515')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
+call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
+call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
+call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#15151
 
