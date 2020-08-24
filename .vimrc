@@ -19,11 +19,13 @@ set dir=~/.swap-files
 set nospell
 set hlsearch
 
+autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
+
 call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf'
-Plug 'preservim/nerdtree'
 Plug 'dense-analysis/ale'
 Plug 'ryanoasis/vim-devicons'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -33,15 +35,25 @@ Plug 'tpope/vim-sensible'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'ryanoasis/vim-devicons'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'sheerun/vim-polyglot'
+Plug 'mattn/emmet-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+Plug 'jparise/vim-graphql'
+Plug 'terryma/vim-multiple-cursors'
 call plug#end()
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-surround'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ntpeters/vim-better-whitespace'
+Plugin 'tpope/vim-fugitive'
 call vundle#end()
 
 colorscheme dracula
@@ -65,6 +77,7 @@ endfunction
 map <leader>r :NERDTreeFind<cr>
 
 let NERDTreeShowHidden=1
+
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 nnoremap <C-J> <C-W>j
@@ -108,10 +121,11 @@ hi Visual          guifg=#000000 guibg=#FD971F
 
 
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
+let g:fzf_preview_window = 'right:60%'
 
 nnoremap th :tabnext<CR>
 nnoremap tl :tabprev<CR>
-nnoremap tn :tabnew<CR>
+nnoremap tn :tabnew <bar> :NERDTreeToggle<CR>
 
 vnoremap <F5> :'<,'>w !xsel -b
 
@@ -123,7 +137,7 @@ let g:ale_linters = {
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'javascript': ['eslint'],
+\   'javascript': ['eslint', 'prettier'],
 \   'ruby': ['rubocop']
 \}
 
@@ -179,5 +193,19 @@ call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
 call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
 call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
 call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#15151
+call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#15151')
 
+set guifont=Hack\ Nerd\ Font:h12
+let g:dracula_italic = 0
+colorscheme dracula
+highlight Normal ctermbg=None
+
+nnoremap <CR> :noh<CR><CR>
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+let g:NERDCustomDelimiters={
+	\ 'javascript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+\}
