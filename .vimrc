@@ -23,39 +23,52 @@ autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 call plug#begin('~/.vim/plugged')
-Plug 'preservim/nerdcommenter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'dense-analysis/ale'
-Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'tpope/vim-sensible'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'ryanoasis/vim-devicons'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'sheerun/vim-polyglot'
-Plug 'mattn/emmet-vim'
-Plug 'pangloss/vim-javascript'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-Plug 'jparise/vim-graphql'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'vwxyutarooo/nerdtree-devicons-syntax'
+  Plug 'preservim/nerdcommenter'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'dense-analysis/ale'
+  Plug 'ryanoasis/vim-devicons'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf.vim'
+  Plug 'dracula/vim', { 'as': 'dracula' }
+  Plug 'tpope/vim-sensible'
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+  Plug 'ryanoasis/vim-devicons'
+  Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+  Plug 'sheerun/vim-polyglot'
+  Plug 'mattn/emmet-vim'
+  Plug 'pangloss/vim-javascript'
+  Plug 'leafgarland/typescript-vim'
+  Plug 'peitalin/vim-jsx-typescript'
+  Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+  Plug 'jparise/vim-graphql'
+  Plug 'terryma/vim-multiple-cursors'
+  Plug 'maxmellon/vim-jsx-pretty'
 call plug#end()
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-surround'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'tpope/vim-fugitive'
+  Plugin 'vim-ruby/vim-ruby'
+  Plugin 'tpope/vim-rails'
+  Plugin 'tpope/vim-surround'
+  Plugin 'vim-airline/vim-airline'
+  Plugin 'vim-airline/vim-airline-themes'
+  Plugin 'ntpeters/vim-better-whitespace'
+  Plugin 'tpope/vim-fugitive'
 call vundle#end()
+
+let g:coc_global_extensions = [
+  \'coc-json',
+  \'coc-git',
+  \'coc-emmet',
+  \'coc-eslint',
+  \'coc-explorer',
+  \'coc-css',
+  \'coc-go',
+  \'coc-html',
+  \'coc-solargraph',
+  \'coc-tslint',
+  \'coc-tsserver'
+  \]
 
 colorscheme dracula
 
@@ -64,22 +77,6 @@ set tabstop=2
 set shiftwidth=2
 " On pressing tab, insert 4 spaces
 set expandtab
-let g:NERDTreeFileExtensionHighlightFullName = 1
-autocmd vimenter * NERDTree
-
-
-map <C-i> :NERDTreeToggle<CR>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
- exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
- exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
-
-map <leader>r :NERDTreeFind<cr>
-
-let NERDTreeShowHidden=1
-
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 nnoremap <C-J> <C-W>j
 nnoremap <C-K> <C-W>k
@@ -126,7 +123,6 @@ let g:fzf_preview_window = 'right:60%'
 
 nnoremap th :tabnext<CR>
 nnoremap tl :tabprev<CR>
-nnoremap tn :tabnew <bar> :NERDTreeToggle<CR>
 
 vnoremap <F5> :'<,'>w !xsel -b
 
@@ -210,3 +206,46 @@ let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
+
+let g:coc_explorer_global_presets = {
+      \   '.vim': {
+      \     'root-uri': '~/.vim',
+      \   },
+      \   'tab': {
+      \     'position': 'tab',
+      \     'quit-on-open': v:true,
+      \   },
+      \   'floating': {
+      \     'position': 'floating',
+      \     'open-action-strategy': 'sourceWindow',
+      \   },
+      \   'floatingTop': {
+      \     'position': 'floating',
+      \     'floating-position': 'center-top',
+      \     'open-action-strategy': 'sourceWindow',
+      \   },
+      \   'floatingLeftside': {
+      \     'position': 'floating',
+      \     'floating-position': 'left-center',
+      \     'floating-width': 50,
+      \     'open-action-strategy': 'sourceWindow',
+      \   },
+      \   'floatingRightside': {
+      \     'position': 'floating',
+      \     'floating-position': 'right-center',
+      \     'floating-width': 50,
+      \     'open-action-strategy': 'sourceWindow',
+      \   },
+      \   'simplify': {
+      \     'file-child-template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
+      \   }
+      \ }
+
+nmap <space>ed :CocCommand explorer --preset .vim<CR>
+nmap <space>e :CocCommand explorer<CR>
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
+
+"List all presets
+nmap <space>el :CocList explPresets
+"Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
