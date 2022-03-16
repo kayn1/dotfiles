@@ -4,7 +4,10 @@ nnoremap <F3> :e $MYVIMRC<CR>
 
 execute pathogen#infect()
 call pathogen#infect()
+<<<<<<< HEAD
 set number
+=======
+>>>>>>> 9c8be2c5026e996b8e0a7f0874f1bf876de43a11
 set nocompatible
 syntax on
 filetype plugin indent on
@@ -13,7 +16,6 @@ filetype plugin indent on
 set cursorline
 set guicursor=i:ver25-iCursor
 set encoding=UTF-8
-
 set swapfile
 set dir=~/.swap-files
 set nospell
@@ -24,7 +26,12 @@ let g:ale_set_balloons = 1
 autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
+let g:ale_disable_lsp = 1
+let g:ale_ruby_rubocop_executable = 'bundle'
+
+set rtp+=/usr/local/bin/fzf
 call plug#begin('~/.vim/plugged')
+<<<<<<< HEAD
   Plug 'preservim/nerdcommenter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -47,10 +54,34 @@ call plug#begin('~/.vim/plugged')
   Plug 'jonsmithers/vim-html-template-literals'
   Plug 'elixir-editors/vim-elixir'
   Plug 'vim-test/vim-test'
+=======
+Plug 'preservim/nerdcommenter'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'junegunn/fzf'
+Plug 'dense-analysis/ale'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'tpope/vim-sensible'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'ryanoasis/vim-devicons'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'sheerun/vim-polyglot'
+Plug 'mattn/emmet-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+Plug 'jparise/vim-graphql'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'vim-test/vim-test'
+>>>>>>> 9c8be2c5026e996b8e0a7f0874f1bf876de43a11
 call plug#end()
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
+<<<<<<< HEAD
   Plugin 'vim-ruby/vim-ruby'
   Plugin 'tpope/vim-rails'
   Plugin 'tpope/vim-surround'
@@ -76,12 +107,29 @@ let g:coc_global_extensions = [
   \'coc-go',
   \'coc-elixir'
   \]
+=======
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-surround'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'ntpeters/vim-better-whitespace'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-rhubarb'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+call vundle#end()
+
+colorscheme dracula
+>>>>>>> 9c8be2c5026e996b8e0a7f0874f1bf876de43a11
 
 set tabstop=2
 " when indenting with '>', use 4 spaces width
 set shiftwidth=2
 " On pressing tab, insert 4 spaces
-set expandtab
+set softtabstop=2 shiftwidth=2 expandtab
+
+
 
 nnoremap <C-J> <C-W>j
 nnoremap <C-K> <C-W>k
@@ -98,6 +146,7 @@ set listchars=tab:•\ ,trail:•,extends:»,precedes:« " Unprintable chars map
 
 nnoremap <silent> <leader>f :FZF<cr>
 nnoremap <silent> <leader>F :FZF ~<cr>
+nnoremap <silent> <leader>g :GFiles<cr>
 nnoremap <C-S> :update<cr>
 
 
@@ -118,12 +167,9 @@ if &term =~ "xterm\\|rxvt"
   " use \003]12;gray\007 for gnome-terminal
 endif
 
-
-
 hi Visual          guifg=#000000 guibg=#FD971F
 
-let $FZF_DEFAULT_COMMAND = 'rg --files --follow --no-ignore-vcs --hidden -g "!{node_modules/*,.git/*}"'
-
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
 let g:fzf_preview_window = 'right:60%'
 
 
@@ -137,6 +183,7 @@ let g:ale_linters = {
       \   'ruby': ['standardrb', 'rubocop'],
       \   'python': ['flake8', 'pylint'],
       \   'javascript': ['eslint'],
+<<<<<<< HEAD
       \   'typescript': ['eslint', 'tsserver', 'prettier'],
       \   'shell': ['shfmt'],
       \   'fish': ['fish'],
@@ -156,6 +203,18 @@ let g:ale_linters_explicit = 1
 
 let g:prettier#config#trailing_comma = 'none'
 
+=======
+      \   'json': [],
+      \   'yaml': ['yamllint']
+      \}
+
+let g:ale_fixers = {
+      \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \   'javascript': ['eslint', 'prettier'],
+      \   'ruby': ['rubocop'],
+      \   'yaml': ['yamlfix']
+      \}
+>>>>>>> 9c8be2c5026e996b8e0a7f0874f1bf876de43a11
 
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
@@ -168,6 +227,7 @@ let g:strip_whitespace_on_save=1
 let g:ale_echo_cursor = 1
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 1
+let g:airline_powerline_fonts = 1
 
 set redrawtime=10000
 
@@ -198,13 +258,11 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 let g:NERDCustomDelimiters={
-	\ 'javascript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
-\}
+      \ 'javascript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+      \}
 
-nnoremap <PageUp> <NoP>
-nnoremap <PageDown> <Nop>
-inoremap <PageUp> <NoP>
-inoremap <PageDown> <Nop>
+set guifont=DroidSansMono\ Nerd\ Font:h11
+map <F7> gg=G<C-o><C-o>
 
 autocmd BufRead,BufNewFile *.arb setfiletype ruby
 
@@ -215,10 +273,11 @@ function! s:build_quickfix_list(lines)
 endfunction
 
 let g:fzf_action = {
-  \ 'ctrl-q': function('s:build_quickfix_list'),
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
+      \ 'ctrl-q': function('s:build_quickfix_list'),
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-x': 'split',
+      \ 'ctrl-v': 'vsplit' }
+
 
 let g:coc_explorer_global_presets = {
       \   '.vim': {
@@ -254,13 +313,27 @@ let g:coc_explorer_global_presets = {
       \   }
       \ }
 
+" Use preset argument to open it
 nmap <space>ed :CocCommand explorer --preset .vim<CR>
+nmap <space>ef :CocCommand explorer --preset floating<CR>
 nmap <space>e :CocCommand explorer<CR>
-autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 
 "List all presets
 nmap <space>el :CocList explPresets
-"Prettier
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+if &term =~# '256color' && ( &term =~# '^screen'  || &term =~# '^tmux' )
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 
 " Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
