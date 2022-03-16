@@ -4,14 +4,14 @@ nnoremap <F3> :e $MYVIMRC<CR>
 
 execute pathogen#infect()
 call pathogen#infect()
-syntax on
 set number
 set nocompatible
-filetype off
+syntax on
+filetype plugin indent on
+
 
 set cursorline
 set guicursor=i:ver25-iCursor
-set termguicolors
 set encoding=UTF-8
 
 set swapfile
@@ -19,14 +19,14 @@ set dir=~/.swap-files
 set nospell
 set hlsearch
 
+let g:ale_disable_lsp = 1
+let g:ale_set_balloons = 1
 autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 call plug#begin('~/.vim/plugged')
   Plug 'preservim/nerdcommenter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'dense-analysis/ale'
-  Plug 'ryanoasis/vim-devicons'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'dracula/vim', { 'as': 'dracula' }
@@ -43,6 +43,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'jparise/vim-graphql'
   Plug 'terryma/vim-multiple-cursors'
   Plug 'maxmellon/vim-jsx-pretty'
+  Plug 'dense-analysis/ale'
+  Plug 'jonsmithers/vim-html-template-literals'
+  Plug 'elixir-editors/vim-elixir'
+  Plug 'vim-test/vim-test'
 call plug#end()
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -54,6 +58,9 @@ call vundle#begin()
   Plugin 'vim-airline/vim-airline-themes'
   Plugin 'ntpeters/vim-better-whitespace'
   Plugin 'tpope/vim-fugitive'
+  Plugin 'SirVer/ultisnips'
+  Plugin 'honza/vim-snippets'
+  Plugin 'tpope/vim-liquid'
 call vundle#end()
 
 let g:coc_global_extensions = [
@@ -63,14 +70,12 @@ let g:coc_global_extensions = [
   \'coc-eslint',
   \'coc-explorer',
   \'coc-css',
-  \'coc-go',
   \'coc-html',
   \'coc-solargraph',
-  \'coc-tslint',
-  \'coc-tsserver'
+  \'coc-tsserver',
+  \'coc-go',
+  \'coc-elixir'
   \]
-
-colorscheme dracula
 
 set tabstop=2
 " when indenting with '>', use 4 spaces width
@@ -83,7 +88,7 @@ nnoremap <C-K> <C-W>k
 nnoremap <C-L> <C-W>l
 nnoremap <C-H> <C-W>h
 
-set regexpengine=1
+set regexpengine=2
 
 set noballooneval
 let g:netrw_nobeval = 1
@@ -121,8 +126,10 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --follow --no-ignore-vcs --hidden -g "!{n
 
 let g:fzf_preview_window = 'right:60%'
 
+
 nnoremap th :tabnext<CR>
 nnoremap tl :tabprev<CR>
+nnoremap tn :tabnew <CR>
 
 vnoremap <F5> :'<,'>w !xsel -b
 
@@ -130,16 +137,22 @@ let g:ale_linters = {
       \   'ruby': ['standardrb', 'rubocop'],
       \   'python': ['flake8', 'pylint'],
       \   'javascript': ['eslint'],
+      \   'typescript': ['eslint', 'tsserver', 'prettier'],
       \   'shell': ['shfmt'],
       \   'fish': ['fish'],
+      \   'go': ['gofmt', 'golint']
       \}
 
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   '*': ['remove_trailing_lines', 'trim_whitespace', 'prettier'],
 \   'javascript': ['eslint', 'prettier'],
 \   'ruby': ['rubocop'],
-\   'shell': ['shfmt']
+\   'shell': ['shfmt'],
+\   'typescript': ['eslint', 'prettier'],
+\   'go': ['gofmt', 'goimports']
 \}
+let g:ale_linters_explicit = 1
+
 
 let g:prettier#config#trailing_comma = 'none'
 
@@ -157,7 +170,6 @@ let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 1
 
 set redrawtime=10000
-syntax sync fromstart
 
 " \cc
 map <Leader>cc :cwindow<CR>:cc<CR><c-w>bz<CR><CR>
@@ -175,6 +187,7 @@ let g:NERDSpaceDelims = 1
 
 set guifont=Hack\ Nerd\ Font:h12
 let g:dracula_italic = 0
+let g:dracula_colorterm = 1
 colorscheme dracula
 highlight Normal ctermbg=None
 
@@ -249,3 +262,37 @@ autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | end
 nmap <space>el :CocList explPresets
 "Prettier
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+" Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
+" - https://github.com/Valloric/YouCompleteMe
+" - https://github.com/nvim-lua/completion-nvim
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+nnoremap <Leader>tn :tabnew <CR>
+
+setlocal autoindent
+setlocal cindent
+setlocal smartindent
+
+"  Parcel - hot module replacement
+set backupcopy=yes
+
+if &term =~# '256color' && ( &term =~# '^screen'  || &term =~# '^tmux' )
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader>a :TestSuite<CR>
+nmap <silent> <leader>l :TestLast<CR>
+nmap <silent> <leader>g :TestVisit<CR>
+
+let test#strategy = "vimterminal"
+let test#vim#term_position = "vertical"
