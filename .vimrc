@@ -25,7 +25,6 @@ autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 call plug#begin('~/.vim/plugged')
-  Plug 'arcticicestudio/nord-vim'
   Plug 'sheerun/vim-polyglot'
   Plug 'preservim/nerdcommenter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -307,5 +306,6 @@ let g:go_highlight_methods = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_types = 1
+let g:go_highlight_function_calls = 1
 let g:go_doc_popup_window = 1
 
