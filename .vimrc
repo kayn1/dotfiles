@@ -25,6 +25,8 @@ autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 call plug#begin('~/.vim/plugged')
+  Plug 'arcticicestudio/nord-vim'
+  Plug 'sheerun/vim-polyglot'
   Plug 'preservim/nerdcommenter'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -34,7 +36,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
   Plug 'ryanoasis/vim-devicons'
   Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-  Plug 'sheerun/vim-polyglot'
   Plug 'mattn/emmet-vim'
   Plug 'pangloss/vim-javascript'
   Plug 'leafgarland/typescript-vim'
@@ -74,7 +75,8 @@ let g:coc_global_extensions = [
   \'coc-solargraph',
   \'coc-tsserver',
   \'coc-go',
-  \'coc-elixir'
+  \'coc-elixir',
+  \'coc-deno'
   \]
 
 set tabstop=2
@@ -296,3 +298,14 @@ nmap <silent> <leader>g :TestVisit<CR>
 
 let test#strategy = "vimterminal"
 let test#vim#term_position = "vertical"
+
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+let g:go_doc_popup_window = 1
+
