@@ -1,40 +1,35 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+
 # Path to your oh-my-zsh installation.
+export ZSH="/Users/daniel/.oh-my-zsh"
 
-export TERM="xterm-256color"
-export ZSH=$HOME/.oh-my-zsh
-ZSH_THEME="spaceship"
+ZSH_THEME="robbyrussell"
 
-plugins=(rails ruby git docker zsh-autosuggestions zsh-syntax-highlighting zsh-nvm)
+plugins=(rails ruby git docker zsh-autosuggestions zsh-completions z)
+
+# append completions to fpath
+fpath=(${ASDF_DIR}/completions $fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit
+
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 source $ZSH/oh-my-zsh.sh
-source ~/.bash_profile
 
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=180'
+. ~/z.sh
 
-export PATH="$PATH:$HOME/.rvm/bin"
+export EDITOR=/opt/homebrew/bin/vim
 
-function code {
-    if [[ $# = 0 ]]
-    then
-        open -a "Visual Studio Code - Insiders"
-    else
-        local argPath="$1"
-        [[ $1 = /* ]] && argPath="$1" || argPath="$PWD/${1#./}"
-        open -a "Visual Studio Code - Insiders" "$argPath"
-    fi
-}
+. $HOME/.asdf/asdf.sh
+eval "$(starship init zsh)"
+eval "$(direnv hook zsh)"
 
-alias cop_changed="git diff-tree -r --no-commit-id --name-only head origin/master | xargs rubocop"
+export GOPATH=/Users/daniel/go
+export PATH="$HOME/go/bin:$PATH"
 
-export PATH=/usr/local/share/npm/bin:$PATH
-export PATH="$HOME/.npm-packages/bin:$PATH"
+alias go=richgo
 
+source <(kubectl completion zsh)
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-autoload -U promptinit; promptinit
-prompt spaceship
-
+export PATH="/Users/daniel/.local/bin:$PATH"
