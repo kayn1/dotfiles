@@ -10,11 +10,14 @@ an executable
 
 -- general
 
+
+
+
 require("lvim.lsp.manager").setup "tailwindcss"
 
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "dracula"
+lvim.colorscheme = "tokyonight-moon"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -61,7 +64,6 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.terminal.direction = "horizontal"
 lvim.builtin.nvimtree.setup.view.side = "left"
@@ -140,10 +142,9 @@ local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   {
     command = "prettier",
-    filetypes = { "typescript", "typescriptreact" },
+    filetypes = { "typescript", "typescriptreact", "astro" },
   },
   { command = "goimports", filetypes = { "go" } },
-  { command = "golines", filetypes = { "go" } },
   { command = "gofmt", filetypes = { "go" } },
 }
 
@@ -156,6 +157,9 @@ linters.setup {
 
 -- Additional Plugins
 lvim.plugins = {
+  { 'cappyzawa/starlark.vim' },
+  { "github/copilot.vim" },
+  { "folke/tokyonight.nvim" },
   { "tpope/vim-rhubarb" },
   {
     "tpope/vim-fugitive",
@@ -177,8 +181,7 @@ lvim.plugins = {
     ft = { "fugitive" }
   },
   { "tpope/vim-surround" },
-  { "folke/tokyonight.nvim" },
-  { "Mofiqul/dracula.nvim" },
+  { "dracula/vim" },
   { "fatih/vim-go" },
   { "ray-x/go.nvim" },
   {
@@ -234,21 +237,10 @@ lvim.plugins = {
       lspconfig.emmet_ls.setup({ capabilities = capabilities })
     end,
   },
+  { 'brenoprata10/nvim-highlight-colors' }
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
--- vim.api.nvim_create_autocmd("BufEnter", {
---   pattern = { "*.json", "*.jsonc" },
---   -- enable wrap mode for json files only
---   command = "setlocal wrap",
--- })
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = "zsh",
---   callback = function()
---     -- let treesitter use bash highlight for zsh files as well
---     require("nvim-treesitter.highlight").attach(0, "bash")
---   end,
--- })
 
 
 vim.cmd [[
@@ -273,3 +265,21 @@ require('lspconfig').gopls.setup({
     }
   }
 })
+require('lspconfig').sorbet.setup({})
+
+require('nvim-highlight-colors').setup {}
+
+vim.g.copilot_no_tab_map = true
+vim.g.copilot_assume_mapped = true
+vim.g.copilot_tab_fallback = ""
+local cmp = require "cmp"
+
+lvim.builtin.cmp.mapping["<C-e>"] = function(fallback)
+  cmp.mapping.abort()
+  local copilot_keys = vim.fn["copilot#Accept"]()
+  if copilot_keys ~= "" then
+    vim.api.nvim_feedkeys(copilot_keys, "i", true)
+  else
+    fallback()
+  end
+end
