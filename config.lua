@@ -18,6 +18,7 @@ require("lvim.lsp.manager").setup "tailwindcss"
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "tokyonight-moon"
+lvim.builtin.dap.active = true
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -146,6 +147,7 @@ formatters.setup {
   },
   { command = "goimports", filetypes = { "go" } },
   { command = "gofmt", filetypes = { "go" } },
+  { command = "golines", filetypes = { "go" } },
 }
 
 local linters = require "lvim.lsp.null-ls.linters"
@@ -157,6 +159,14 @@ linters.setup {
 
 -- Additional Plugins
 lvim.plugins = {
+  { "voldikss/vim-floaterm" },
+  { "vim-test/vim-test" },
+  { "mfussenegger/nvim-dap" },
+  { "leoluz/nvim-dap-go",
+    config = function()
+      require("dap-go").setup()
+    end,
+  },
   { 'cappyzawa/starlark.vim' },
   { "github/copilot.vim" },
   { "folke/tokyonight.nvim" },
@@ -240,14 +250,6 @@ lvim.plugins = {
   { 'brenoprata10/nvim-highlight-colors' }
 }
 
--- Autocommands (https://neovim.io/doc/user/autocmd.html)
-
-
-vim.cmd [[
-au BufRead,BufNewFile *.gohtml set filetype=gohtmltmpl
-]]
-
-
 vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
 vim.opt.listchars:append "eol:↴"
@@ -272,6 +274,7 @@ require('nvim-highlight-colors').setup {}
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_assume_mapped = true
 vim.g.copilot_tab_fallback = ""
+vim.g.copilot_auto_start = true
 local cmp = require "cmp"
 
 lvim.builtin.cmp.mapping["<C-e>"] = function(fallback)
@@ -283,3 +286,78 @@ lvim.builtin.cmp.mapping["<C-e>"] = function(fallback)
     fallback()
   end
 end
+
+-- lvim.keys.normal_mode['<leader>b'] = require 'dap'.toggle_breakpoint
+-- lvim.keys.normal_mode['<leader>db'] = require 'dap'.continue()
+-- lvim.keys.normal_mode['<F10>'] = require 'dap'.step_over
+-- lvim.keys.normal_mode['<F11>'] = require 'dap'.step_into
+-- lvim.keys.normal_mode['<F12>'] = require 'dap'.step_out
+--
+--
+
+local dap = require('dap')
+dap.adapters.ruby = function(callback, config)
+  callback {
+    type = "server",
+    host = "127.0.0.1",
+    port = "${port}",
+    executable = {
+      command = "bundle",
+      args = { "exec", "rdbg", "-n", "--open", "--port", "${port}",
+        "-c", "--", "bundle", "exec", config.command, config.script,
+      },
+    },
+  }
+end
+
+local dap = require("dap")
+dap.adapters.ruby = function(callback, config)
+  callback {
+    type = "server",
+    host = "127.0.0.1",
+    port = "${port}",
+    executable = {
+      command = "bundle",
+      args = { "exec", "rdbg", "-n", "--open", "--port", "${port}",
+        "-c", "--", "bundle", "exec", config.command, config.script,
+      },
+    },
+  }
+end
+
+dap.configurations.ruby = {
+  {
+    type = "ruby",
+    name = "debug current file",
+    request = "attach",
+    localfs = true,
+    command = "ruby",
+    script = "${file}",
+  },
+  {
+    type = "ruby",
+    name = "run current spec file",
+    request = "attach",
+    localfs = true,
+    command = "rspec",
+    script = "${file}",
+  },
+}
+
+
+vim.g["test#strategy"] = "neovim"
+vim.g["test#neovim#term_position"] = "vert botright"
+vim.g["test#go#runner"] = "richgo"
+vim.g["test#neovim#start_normal"] = 1
+
+lvim.builtin.which_key.mappings["t"] = {
+  name = "+Test",
+  n = { ":TestNearest<CR>", "References" },
+  t = { ":TestFile<CR>", "File" },
+  s = { ":TestSuite<CR>", "Suite" },
+  l = { ":TestLast<CR>", "Last" }
+}
+
+vim.api.nvim_set_var("copilot_filetypes", {
+  ["dap-repl"] = false,
+})
