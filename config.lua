@@ -19,6 +19,7 @@ lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "tokyonight-moon"
 lvim.builtin.dap.active = true
+lvim.builtin.project.active = true
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -50,16 +51,16 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 -- }
 
 -- Use which-key to add extra bindings with the leader-key prefix
--- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
--- lvim.builtin.which_key.mappings["t"] = {
---   name = "+Trouble",
---   r = { "<cmd>Trouble lsp_references<cr>", "References" },
---   f = { "<cmd>Trouble lsp_definitions<cr>", "Definitions" },
---   d = { "<cmd>Trouble document_diagnostics<cr>", "Diagnostics" },
---   q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
---   l = { "<cmd>Trouble loclist<cr>", "LocationList" },
---   w = { "<cmd>Trouble workspace_diagnostics<cr>", "Wordspace Diagnostics" },
--- }
+lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
+lvim.builtin.which_key.mappings["t"] = {
+  name = "+Trouble",
+  r = { "<cmd>Trouble lsp_references<cr>", "References" },
+  f = { "<cmd>Trouble lsp_definitions<cr>", "Definitions" },
+  d = { "<cmd>Trouble document_diagnostics<cr>", "Diagnostics" },
+  q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
+  l = { "<cmd>Trouble loclist<cr>", "LocationList" },
+  w = { "<cmd>Trouble workspace_diagnostics<cr>", "Wordspace Diagnostics" },
+}
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -139,6 +140,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 --   },
 -- }
 
+
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   {
@@ -154,21 +156,76 @@ local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
   { command = "eslint", filetypes = { "typescript", "typescriptreact" } },
   { command = "staticcheck", filetypes = { "go" } },
-  { command = "golangci_lint", filetypes = { "go" } },
+  -- { command = "golangci_lint", filetypes = { "go" } },
 }
 
 -- Additional Plugins
 lvim.plugins = {
+  { "nvim-neotest/neotest",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-neotest/neotest-go"
+    },
+    config = function()
+      -- get neotest namespace (api call creates or returns namespace)
+      local neotest_ns = vim.api.nvim_create_namespace("neotest")
+      vim.diagnostic.config({
+        virtual_text = {
+          format = function(diagnostic)
+            local message =
+            diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
+            return message
+          end,
+        },
+      }, neotest_ns)
+      require("neotest").setup({
+        -- your neotest config here
+        adapters = {
+          require("neotest-go"),
+        },
+      })
+    end,
+  },
+  { "sindrets/diffview.nvim" },
+  {
+    "junegunn/fzf.vim",
+    requires = {
+      "junegunn/fzf"
+    }
+  },
+  {
+    "folke/todo-comments.nvim",
+    requires = "nvim-lua/plenary.nvim",
+    config = function()
+      require("todo-comments").setup {
+        -- Configuration options
+        -- ...
+      }
+    end
+  },
   { "voldikss/vim-floaterm" },
-  { "vim-test/vim-test" },
+  { "vim-test/vim-test",
+    cmd = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
+    keys = { "<localleader>tf", "<localleader>tn", "<localleader>ts" },
+    config = function()
+      vim.cmd [[
+          function! ToggleTermStrategy(cmd) abort
+            call luaeval("require('toggleterm').exec(_A[1])", [a:cmd])
+          endfunction
+          let g:test#custom_strategies = {'toggleterm': function('ToggleTermStrategy')}
+        ]]
+    end,
+  },
   { "mfussenegger/nvim-dap" },
   { "leoluz/nvim-dap-go",
     config = function()
       require("dap-go").setup()
     end,
   },
+  { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" } },
   { 'cappyzawa/starlark.vim' },
-  { "github/copilot.vim" },
   { "folke/tokyonight.nvim" },
   { "tpope/vim-rhubarb" },
   {
@@ -247,7 +304,23 @@ lvim.plugins = {
       lspconfig.emmet_ls.setup({ capabilities = capabilities })
     end,
   },
-  { 'brenoprata10/nvim-highlight-colors' }
+  { 'brenoprata10/nvim-highlight-colors' },
+  {
+    "github/copilot.vim",
+    config = function()
+      -- copilot assume mapped
+      vim.g.copilot_assume_mapped = true
+      vim.g.copilot_no_tab_map = true
+    end,
+  },
+  {
+    "hrsh7th/cmp-copilot",
+    config = function()
+      lvim.builtin.cmp.formatting.source_names["copilot"] = "( )"
+      table.insert(lvim.builtin.cmp.sources, 2, { name = "copilot" })
+    end,
+  },
+  { "ellisonleao/glow.nvim", config = function() require("glow").setup() end }
 }
 
 vim.opt.list = true
@@ -263,7 +336,7 @@ require("indent_blankline").setup {
 require('lspconfig').gopls.setup({
   settings = {
     gopls = {
-      gofumpt = true
+      gofumpt = true,
     }
   }
 })
@@ -271,46 +344,9 @@ require('lspconfig').sorbet.setup({})
 
 require('nvim-highlight-colors').setup {}
 
-vim.g.copilot_no_tab_map = true
-vim.g.copilot_assume_mapped = true
-vim.g.copilot_tab_fallback = ""
-vim.g.copilot_auto_start = true
-local cmp = require "cmp"
 
-lvim.builtin.cmp.mapping["<C-e>"] = function(fallback)
-  cmp.mapping.abort()
-  local copilot_keys = vim.fn["copilot#Accept"]()
-  if copilot_keys ~= "" then
-    vim.api.nvim_feedkeys(copilot_keys, "i", true)
-  else
-    fallback()
-  end
-end
-
--- lvim.keys.normal_mode['<leader>b'] = require 'dap'.toggle_breakpoint
--- lvim.keys.normal_mode['<leader>db'] = require 'dap'.continue()
--- lvim.keys.normal_mode['<F10>'] = require 'dap'.step_over
--- lvim.keys.normal_mode['<F11>'] = require 'dap'.step_into
--- lvim.keys.normal_mode['<F12>'] = require 'dap'.step_out
---
---
 
 local dap = require('dap')
-dap.adapters.ruby = function(callback, config)
-  callback {
-    type = "server",
-    host = "127.0.0.1",
-    port = "${port}",
-    executable = {
-      command = "bundle",
-      args = { "exec", "rdbg", "-n", "--open", "--port", "${port}",
-        "-c", "--", "bundle", "exec", config.command, config.script,
-      },
-    },
-  }
-end
-
-local dap = require("dap")
 dap.adapters.ruby = function(callback, config)
   callback {
     type = "server",
@@ -345,17 +381,23 @@ dap.configurations.ruby = {
 }
 
 
-vim.g["test#strategy"] = "neovim"
+vim.g["test#strategy"] = "floaterm"
 vim.g["test#neovim#term_position"] = "vert botright"
 vim.g["test#go#runner"] = "richgo"
 vim.g["test#neovim#start_normal"] = 1
 
 lvim.builtin.which_key.mappings["t"] = {
-  name = "+Test",
-  n = { ":TestNearest<CR>", "References" },
-  t = { ":TestFile<CR>", "File" },
-  s = { ":TestSuite<CR>", "Suite" },
-  l = { ":TestLast<CR>", "Last" }
+  name = "Test",
+  f = { "<cmd>TestFile<cr>", "File" },
+  n = { "<cmd>TestNearest<cr>", "Nearest" },
+  s = { "<cmd>TestSuite<cr>", "Suite" },
+}
+
+lvim.builtin.which_key.mappings["m"] = {
+  name = "+Terminal",
+  f = { "<cmd>ToggleTerm<cr>", "Floating terminal" },
+  v = { "<cmd>2ToggleTerm size=30 direction=vertical<cr>", "Split vertical" },
+  h = { "<cmd>2ToggleTerm size=30 direction=horizontal<cr>", "Split horizontal" },
 }
 
 vim.api.nvim_set_var("copilot_filetypes", {
