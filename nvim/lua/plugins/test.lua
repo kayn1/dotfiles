@@ -1,11 +1,13 @@
 return {
   { "nvim-neotest/neotest-plenary" },
   { "nvim-neotest/neotest-go" },
+  { "olimorris/neotest-rspec" },
   {
     "nvim-neotest/neotest",
     opts = { adapters = {
       "neotest-plenary",
       ["neotest-go"] = {},
+      ["neotest-rspec"] = {},
     } },
     config = function()
       -- get neotest namespace (api call creates or returns namespace)

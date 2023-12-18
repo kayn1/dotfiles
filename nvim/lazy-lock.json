@@ -1,4 +1,5 @@
 {
+  "ChatGPT.nvim": { "branch": "main", "commit": "9f8062c7c40ec082c49f10e20818333a972b8063" },
   "Comment.nvim": { "branch": "master", "commit": "0236521ea582747b58869cb72f70ccfa967d2e89" },
   "LazyVim": { "branch": "main", "commit": "a72a84972d85e5bbc6b9d60a0983b37efef21b8a" },
   "LuaSnip": { "branch": "master", "commit": "ea7d7ea510c641c4f15042becd27f35b3e5b3c2b" },
@@ -33,6 +34,7 @@
   "neotest": { "branch": "master", "commit": "1e67a504d03def3a6a1125d934cb511680f72555" },
   "neotest-go": { "branch": "main", "commit": "1a15e1136db43775214a3e7a598f8930c29c94b7" },
   "neotest-plenary": { "branch": "master", "commit": "e0d9b1530307a03abcc52fc0ae28f054dea3f752" },
+  "neotest-rspec": { "branch": "main", "commit": "51a3b866d85733d2df2c6b5a16d75ce6ed2fbade" },
   "noice.nvim": { "branch": "main", "commit": "74c2902146b080035beb19944baf6f014a954720" },
   "nui.nvim": { "branch": "main", "commit": "c8de23342caf8d50b15d6b28368d36a56a69d76f" },
   "null-ls.nvim": { "branch": "main", "commit": "0010ea927ab7c09ef0ce9bf28c2b573fc302f5a7" },
