@@ -12,15 +12,5 @@ return {
         mode = "n",
       },
     },
-    opts = {
-      dap_configurations = {
-        {
-          type = "go",
-          name = "Custom Configuration",
-          request = "launch",
-          program = "${workspaceFolder}/main.go",
-        },
-      },
-    },
   },
 }

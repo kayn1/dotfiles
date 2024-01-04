@@ -19,6 +19,4 @@ return {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
   },
-  "jose-elias-alvarez/null-ls.nvim",
-  event = { "BufEnter" },
 }
