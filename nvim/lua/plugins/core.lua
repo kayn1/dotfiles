@@ -18,6 +18,11 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
+    opts = {
+      servers = {
+        solargraph = {},
+      },
+    },
   },
   {
     "williamboman/mason.nvim",
