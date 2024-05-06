@@ -16,6 +16,11 @@ return {
     },
   },
   {
+    "nvim-telescope/telescope.nvim",
+    after = "plenary.nvim",
+    config = function() end,
+  },
+  {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     opts = {

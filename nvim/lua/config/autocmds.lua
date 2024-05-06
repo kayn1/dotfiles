@@ -8,3 +8,5 @@ vim.filetype.add({
     templ = "templ",
   },
 })
+
+vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
